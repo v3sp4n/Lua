@@ -1,7 +1,8 @@
 {
-	"[irc]BattleShip":{
+	"[irc]BattleShip":{ 
 		"version":"1.0.0",
-		"news":"lmao"
+		"news":"-",
+		"url":"blast.hk/..."
 	},
 	
 	"TEST":{
