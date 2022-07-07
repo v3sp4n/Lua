@@ -2,5 +2,9 @@
 	"[irc]BattleShip":{
 		"version":"1.0.0",
 		"news":"lmao"
+	},
+	
+	"TEST":{
+		"test":"text"
 	}
 }
