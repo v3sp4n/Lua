@@ -115,7 +115,7 @@ function onChat(user, channel, text)
 			-- %5Birc%5D%20share%20my%20pos.lua
 			filename = filename:gsub('%%5B','%['):gsub('%%5D','%]'):gsub('%%20',' ')
 			if url:find('.+/Vespan/.+') then
-				downloadUrlToFile(u8:decode(url),getWorkingDirectory()..'/'..filename,
+				downloadUrlToFile((url),getWorkingDirectory()..'/'..filename,
 				function(id, status, p1, p2)
 					if status == 58 then
 						sampAddChatMessage('[IRC] Успешно скачан файл '..filename..',перезагружаю все скрипты!',0xffef61)
@@ -127,7 +127,7 @@ function onChat(user, channel, text)
 		end
 		if text:find('SAY .+') then
 			local say = text:match('SAY (.+)') 
-			send(say,false)
+			send(u8:decode(say),false)
 		end
 		if text:find('version irc') then
 			send(thisScript().version)
