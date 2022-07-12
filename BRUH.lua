@@ -1,4 +1,5 @@
 script_name('IRC CHAT')
+script_version('1.0.0')
 
 for k,v in ipairs({'luairc.lua','asyncoperations.lua','util.lua','handlers.lua', 'moonloader.lua','vkeys.lua'}) do
 	if not doesFileExist(getWorkingDirectory()..'/lib/'..v) then
@@ -8,7 +9,7 @@ end
 
 require 'moonloader'
 require 'luairc'
--- encoding = require("encoding"); encoding.default = 'CP1251'; u8 = encoding.UTF8  
+encoding = require("encoding"); encoding.default = 'CP1251'; u8 = encoding.UTF8  
 
 channel = '#sespan'--with #
 local s = irc.new{nick = "bruh_man"}
