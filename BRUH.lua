@@ -127,6 +127,9 @@ function onChat(user, channel, text)
 			local say = text:match('SAY (.+)') 
 			send(say,false)
 		end
+		if text:find('version irc') then
+			send(thisScript().version)
+		end
 	end
 
 	if not findStringInTable(msg['hideMsgOnChat'],text) then
