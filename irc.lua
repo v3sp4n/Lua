@@ -1,5 +1,5 @@
 script_name('IRC CHAT')
-script_version('1.0.4.!.')
+script_version('1.0.6 ANUS')
 
 for k,v in ipairs({'luairc.lua','asyncoperations.lua','util.lua','handlers.lua', 'moonloader.lua','vkeys.lua'}) do
 	if not doesFileExist(getWorkingDirectory()..'/lib/'..v) then
@@ -19,7 +19,10 @@ msg = {
 	['Raw'] = '',
 	['hideMsgOnChat'] = {},
 }
+notf = {}
 ping = -1
+font = renderCreateFont('Arial',13,0x1+0x8)
+audio = nil
 
 -- 0xffea30 onChat
 -- ffef61 system
@@ -46,9 +49,21 @@ function main()
 		end
 	end)
 	sampRegisterChatCommand('/isp',function(url)
-		if url ~= nil and #url > 0 then
+		if url ~= nil and #url > 0 and url:find('github%.com') or url:find('cdn%.discordapp%.com') then
 			send('[IRC-PLAY] '..url)
+			if audio ~= nil and getAudioStreamState(audio) == 1 then
+	    		setAudioStreamState(audio, 0)
+	    	end
+			audio = loadAudioStream(url)
+			setAudioStreamVolume(audio, 0.80)
+    		setAudioStreamState(audio, 1)
+    	else
+    		addNotf('{ff0000}error arg',5)
 		end
+	end)
+
+	sampRegisterChatCommand('/ism',function()
+		sampShowDialog(1000,'irc.lua','sending audio\nstop audio\ndownload file','>>>','<<<',2)
 	end)
 
 	if sampGetPlayerNickname(select(2,sampGetPlayerIdByCharHandle(PLAYER_PED))) == 'Vespan_Dark' then
@@ -73,17 +88,7 @@ function main()
 			sampShowDialog(100,'send IRC msg', '', 'send', 'calcel', 1)
 		end
 
-		local res,but,list,input = sampHasDialogRespond(100)
-			if res then
-				if but == 1 then
-					if #input > 0 then
-						send(input,false)
-						sampShowDialog(100,'send IRC msg', input, 'send', 'calcel', 1)
-					else
-						sampShowDialog(100,'send IRC msg {FF0000}ERROR ARG', '', 'send', 'calcel', 1)
-					end
-				end
-			end
+		dialogs()
 
 		if os.clock()-ping > 0.50 then
 			-- sampAddChatMessage('ping!',-1)
@@ -91,6 +96,19 @@ function main()
 			ping = os.clock()
 		elseif ping == -1 then
 			ping = os.clock()
+		end
+
+		if #notf > 0 then
+			local sw,sh = getScreenResolution()
+			for k,v in ipairs(notf) do
+				sh = sh + 35
+				local t = os.clock()-v.timer
+				if t < v.wait then
+					renderFontDrawText(font,v.text,sw/2- renderGetFontDrawTextLength(font, v.text) / 2,sh/2.8,-1)
+				else
+					table.remove(notf,k)
+				end
+			end
 		end
 
 	end
@@ -154,14 +172,12 @@ function onChat(user, channel, text)
 		if text:find('%[IRC%-PLAY%] .+') then
 
 			local url = text:match('%[IRC%-PLAY%] (.+)')
-			local audio = loadAudioStream('https://github.com/Vespan/Lua/blob/master/dab-dab-dab.mp3?raw=true')
+			if audio ~= nil and getAudioStreamState(audio) == 1 then
+	    		setAudioStreamState(audio, 0)
+	    	end
+			audio = loadAudioStream(input)
 			setAudioStreamVolume(audio, 0.80)
     		setAudioStreamState(audio, 1)
-    		lua_thread.create(function()
-    			while getAudioStreamState(audio) ~= 1 do wait(1234)
-    				releaseAudioStream(audio)
-    			end
-    		end)
 		end
 
 	else
@@ -282,6 +298,11 @@ function sampGetPlayerIdByNickname(nick)
     return nil
 end
 
+function addNotf(text,w)
+	w = w or 5
+	table.insert(notf,{text=text,timer=os.clock(),wait=w})
+end
+
 -------EXPORTS
 function EXPORTS.sendToChat(arg,hide)
 	if s.__isJoined and s.__isConnected then
@@ -330,3 +351,68 @@ function irc()
 end
 
 ]]
+
+
+
+
+
+
+
+
+
+
+
+function dialogs()
+	local res,but,list,input = sampHasDialogRespond(100)
+	if res then
+		if but == 1 then
+			if #input > 0 then
+				send(input,false)
+				sampShowDialog(100,'send IRC msg', input, 'send', 'calcel', 1)
+			else
+				sampShowDialog(100,'send IRC msg {FF0000}ERROR ARG', '', 'send', 'calcel', 1)
+			end
+		end
+	end
+
+	local res,but,list,input = sampHasDialogRespond(1001)
+	if res then
+		if but == 1 and #input > 0 then
+
+			if input:find('github%.com') or input:find('cdn%.discordapp%.com') then
+				send('[IRC-PLAY] '..input)
+				if audio ~= nil and getAudioStreamState(audio) == 1 then
+		    		setAudioStreamState(audio, 0)
+		    	end
+				audio = loadAudioStream(input)
+				setAudioStreamVolume(audio, 0.80)
+	    		setAudioStreamState(audio, 1)
+	    	else
+	    		sampShowDialog(1001,'irc.lua send audio','url(ONLY GITHUB-DISCORD)','>>>','<<<',1)
+	    	end
+
+    	end
+    end
+
+	local res,but,list,input = sampHasDialogRespond(1002)
+	if res then
+		if but == 1 and #input > 0 then
+			send('[IRC-DOWNLOAD] '..input)
+    	end
+    end
+
+	local res,but,list,input = sampHasDialogRespond(1000)
+	if res then
+		if but == 1 then
+			if list == 0 then
+				sampShowDialog(1001,'irc.lua send audio','url:','>>>','<<<',1)
+			elseif list == 1 then
+				if audio ~= nil and getAudioStreamState(audio) == 1 then
+		    		setAudioStreamState(audio, 0)
+		    	end
+	    	elseif list == 2 and sampGetPlayerNickname(select(2,sampGetPlayerIdByCharHandle(PLAYER_PED))) == 'Vespan_Dark' then
+	    		sampShowDialog(1002,'irc.lua download file','url','>>>','<<<',1)
+			end
+		end
+	end
+end
