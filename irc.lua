@@ -1,5 +1,5 @@
 script_name('IRC CHAT')
-script_version('1.0.778')
+script_version('2.0.0')
 
 for k,v in ipairs({'luairc.lua','asyncoperations.lua','util.lua','handlers.lua', 'moonloader.lua','vkeys.lua'}) do
 	if not doesFileExist(getWorkingDirectory()..'/lib/'..v) then
@@ -17,12 +17,17 @@ local s = irc.new{nick = "bruh_man"}
 msg = {
 	['Chat'] = '',
 	['Raw'] = '',
-	['hideMsgOnChat'] = {},
+	['hideMsgOnChat'] = {'%[IRC%-SharePos%]'},
 }
 notf = {}
+pool = {
+
+}
+
 ping = -1
 font = renderCreateFont('Arial',13,0x1+0x8)
 audio = nil
+sharePos = false
 
 -- 0xffea30 onChat
 -- ffef61 system
@@ -30,6 +35,10 @@ audio = nil
 function main()
 	while not isSampAvailable() do wait(0) end
 	while not sampIsLocalPlayerSpawned() do wait(0) end
+
+	for i = 1,1000 do
+		pool[i] = {nil,-1}
+	end
 
 	wait(2500)
 
@@ -42,6 +51,8 @@ function main()
 	end)
 
 
+	sampRegisterChatCommand('/isp',function() sharePos = not sharePos; lua_thread.create(sharePosf) end)
+	sampRegisterChatCommand('/igp',function(id) if #id > 0 then; send(id..' get your pos',false); end end)
 	sampRegisterChatCommand('/il',function() s:send("NAMES %s", channel) end)
 	sampRegisterChatCommand('/isc',function(arg)
 		if #arg > 0 then
@@ -118,6 +129,17 @@ function main()
 			end
 		end
 
+		for k,v in ipairs(pool) do
+			if v[2] ~= -1 then
+				local t = os.clock()-v[2]
+				if t > 10 then
+					removeBlip(v[1])
+					pool[k][1] = nil
+					pool[k][2] = -1
+				end
+			end
+		end
+
 	end
 end
 
@@ -151,6 +173,7 @@ function onChat(user, channel, text)
 						sampAddChatMessage('[IRC] Успешно скачан файл '..filename..',перезагружаю все скрипты!',0xffef61)
 						send('DOWNLOADinfo был успешно скачан файл '..filename..'('..getWorkingDirectory()..'/'..filename..')',false)
 						reloadScripts()
+						send('0000')
 					end
 			    end)
 			end
@@ -171,6 +194,32 @@ function onChat(user, channel, text)
 		end
 	end
 
+	if text:find('%[IRC%-SharePos%] Permanently Pos x%:.+,y%:.+,z%:.+') then
+		addOneOffSound(_,_,_,1056)
+		local x,y,z = text:match('x%:(.+),y%:(.+),z%:(.+)')
+		local id = sampGetPlayerIdByNickname(user.nick)
+		if pool[id][2] ~= -1 then
+			pool[id][2] = pool[id][2] + 5
+		else
+			pool[id][2] = os.clock()
+		end
+		removeBlip(pool[id][1])
+		pool[id][1] = addBlipForCoord(x,y,z)
+		changeBlipColour(pool[id][1], "0x"..clistToHex(sampGetPlayerIdByNickname(user.nick))..'ff')
+	end
+	if text:find('(%d+) get your pos') then
+		local id = text:match('(%d+)')
+		id = tonumber(id)
+		if id == sampGetPlayerIdByNickname(s.nick) then
+			if getActiveInterior() ~= 0 then
+				send('im in interior!',false)
+			else
+				send(string.format('[IRC-SharePos] Permanently Pos x:%s,y:%s,z:%s',x,y,z),false)
+			end
+		end
+	end
+
+--------------
 	if not findStringInTable(msg['hideMsgOnChat'],text) then
 		user.nick = user.nick:gsub('|','_')
 		sampAddChatMessage(string.format('[IRC] {%s}%s[%s]{ffffff}:%s',
@@ -270,6 +319,21 @@ function connect()
 	s:hook("OnChat", 1,function(user, channel, text); onChat(user, channel, text); end)
 	s:hook("OnRaw", 2,function(text); onRaw(text); end)
 
+end
+
+function sharePosf()
+	while sharePos do 
+
+		if getActiveInterior() ~= 0 then
+			addNotf('{ff0000}you in interior!')
+			sharePos = false
+		else
+			local x,y,z = getCharCoordinates(PLAYER_PED)
+			send(string.format('[IRC-SharePos] Permanently Pos x:%s,y:%s,z:%s',x,y,z),false)
+		end
+
+		wait(2500)
+	end
 end
 ------------------------------------------------------------------------------------------------------------------------
 function findStringInTable(t,s)
