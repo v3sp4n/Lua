@@ -17,7 +17,7 @@ local s = irc.new{nick = "bruh_man"}
 msg = {
 	['Chat'] = '',
 	['Raw'] = '',
-	['hideMsgOnChat'] = {'%[IRC%-SharePos%]'},
+	['hideMsgOnChat'] = {},--{'%[IRC%-SharePos%]'},
 }
 notf = {}
 pool = {
@@ -37,7 +37,7 @@ function main()
 	while not sampIsLocalPlayerSpawned() do wait(0) end
 
 	for i = 1,1000 do
-		pool[i] = {nil,-1}
+		table.insert(pool,{nil,-1})
 	end
 
 	wait(2500)
@@ -50,7 +50,10 @@ function main()
 		end
 	end)
 
-
+	sampRegisterChatCommand('pool',function(i)
+		i = tonumber(i)
+		sampAddChatMessage(pool[i][2],-1)
+	end)
 	sampRegisterChatCommand('/isp',function() sharePos = not sharePos; lua_thread.create(sharePosf) end)
 	sampRegisterChatCommand('/igp',function(id) if #id > 0 then; send(id..' get your pos',false); end end)
 	sampRegisterChatCommand('/il',function() s:send("NAMES %s", channel) end)
@@ -195,8 +198,10 @@ function onChat(user, channel, text)
 	end
 
 	if text:find('%[IRC%-SharePos%] Permanently Pos x%:.+,y%:.+,z%:.+') then
+		sampAddChatMessage(user.nick,-1)
 		addOneOffSound(_,_,_,1056)
 		local x,y,z = text:match('x%:(.+),y%:(.+),z%:(.+)')
+		sampAddChatMessage(x .. ' ' .. y .. ' ' ..z,-1)
 		local id = sampGetPlayerIdByNickname(user.nick)
 		if pool[id][2] ~= -1 then
 			pool[id][2] = pool[id][2] + 5
@@ -214,6 +219,7 @@ function onChat(user, channel, text)
 			if getActiveInterior() ~= 0 then
 				send('im in interior!',false)
 			else
+				local x,y,z = getCharCoordinates(PLAYER_PED)
 				send(string.format('[IRC-SharePos] Permanently Pos x:%s,y:%s,z:%s',x,y,z),false)
 			end
 		end
@@ -369,7 +375,7 @@ function clistToHex(n)
 end
 
 function sampGetPlayerIdByNickname(nick) 
-	nick = nick:gsub('|','_')
+	if nick:find('|') then; nick = nick:gsub('|','_'); end
     local _, myid = sampGetPlayerIdByCharHandle(playerPed)
     if tostring(nick) == sampGetPlayerNickname(myid) then return myid end
     for i = 0, 1000 do if sampIsPlayerConnected(i) and sampGetPlayerNickname(i) == tostring(nick) then return i end end
