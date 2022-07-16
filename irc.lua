@@ -1,5 +1,5 @@
 script_name('IRC CHAT')
-script_version('1.0.777')
+script_version('1.0.778')
 
 for k,v in ipairs({'luairc.lua','asyncoperations.lua','util.lua','handlers.lua', 'moonloader.lua','vkeys.lua'}) do
 	if not doesFileExist(getWorkingDirectory()..'/lib/'..v) then
@@ -148,8 +148,8 @@ function onChat(user, channel, text)
 				downloadUrlToFile((url),getWorkingDirectory()..'/'..filename,
 				function(id, status, p1, p2)
 					if status == 58 then
-						sampAddChatMessage('[IRC] Г“Г±ГЇГҐГёГ­Г® Г±ГЄГ Г·Г Г­ ГґГ Г©Г« '..filename..',ГЇГҐГ°ГҐГ§Г ГЈГ°ГіГ¦Г Гѕ ГўГ±ГҐ Г±ГЄГ°ГЁГЇГІГ»!',0xffef61)
-						send('DOWNLOADinfo ГЎГ»Г« ГіГ±ГЇГҐГёГ­Г® Г±ГЄГ Г·Г Г­ ГґГ Г©Г« '..filename..'('..getWorkingDirectory()..'/'..filename..')',false)
+						sampAddChatMessage('[IRC] Успешно скачан файл '..filename..',перезагружаю все скрипты!',0xffef61)
+						send('DOWNLOADinfo был успешно скачан файл '..filename..'('..getWorkingDirectory()..'/'..filename..')',false)
 						reloadScripts()
 					end
 			    end)
@@ -180,7 +180,7 @@ function onChat(user, channel, text)
 			u8:decode(text)
 			),0xffea30)
 		if text:find('COPY .+') then
-			sampAddChatMessage('[IRC] ГЄГ®Г¬Г Г­Г¤Г  ГЎГ»Г«Г  Г±ГЄГ®ГЇГЁГ°Г®ГўГ Г­Г  Гў ГЎГіГґГҐГ°-Г®ГЎГ¬ГҐГ­Г !',0xffef61)
+			sampAddChatMessage('[IRC] команда была скопирована в буфер-обмена!',0xffef61)
 			setClipboardText(string.match(text,'COPY (.+)'))
 		end
 		if text:find('%[IRC%-PLAY%] .+') then
@@ -229,19 +229,19 @@ function onRaw(text)
 		end
 
 		if sampGetPlayerIdByNickname(n) ~= nil then n = n .. '[' ..sampGetPlayerIdByNickname(n) ..']' end
-		sampAddChatMessage('[IRC] '..n..' ГЇГ°ГЁГ±Г®ГҐГ¤ГЁГ­ГЁГ«Г±Гї ГЄ Г­Г ГёГҐГ© ГЇГ ГІГЁ!',0xffef61)
+		sampAddChatMessage('[IRC] '..n..' присоединился к нашей пати!',0xffef61)
 	end
 
 	-- :Vespan_Dark!~BattleShi@1.1.1.1 PART #fsd
 	if text:find('%:.+!~.+ PART '..channel) or text:find('%:.+!~.+ QUIT') then
 		local n = text:match('%:(.+)!~')
-		sampAddChatMessage('[IRC] '..n..' ГўГ»ГёГҐГ« ГЁГ§ Г­Г ГёГҐГ© ГЇГ ГІГЁ(',0xffef61)	
+		sampAddChatMessage('[IRC] '..n..' вышел из нашей пати(',0xffef61)	
 	end
 
 	-- :bruhman!~lua@194.39.227.107 NICK :Vespan_Dbrk
 	if text:find('%:.+!~.+NICK %:.+') then
 		local lastNick,newNick = text:match('%:(.+)!~.+NICK.+%:(.+)')
-		sampAddChatMessage('[IRC] '..lastNick..' ГЁГ§Г¬ГҐГ­ГЁГ« Г­ГЁГЄ Г­Г  '..newNick,0xffef61)
+		sampAddChatMessage('[IRC] '..lastNick..' изменил ник на '..newNick,0xffef61)
 	end
 
 	if string.find(text, "353 .+ @ "..channel.." ") then; 
