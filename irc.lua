@@ -1,5 +1,5 @@
 script_name('IRC CHAT')
-script_version('2.0.1')
+script_version('2.0.2')
 
 for k,v in ipairs({'luairc.lua','asyncoperations.lua','util.lua','handlers.lua', 'moonloader.lua','vkeys.lua'}) do
 	if not doesFileExist(getWorkingDirectory()..'/lib/'..v) then
@@ -151,7 +151,7 @@ function send(arg,hide);
 	if not hide then	
 		sampAddChatMessage(string.format('[IRC] {%s}%s[%s]{ffffff}:%s',
 			clistToHex(s.nick),
-			(s.nick):gsub('|','_'),
+			(s.nick),
 			sampGetPlayerIdByNickname(s.nick),
 			arg),
 		0xffea30) 
@@ -197,19 +197,19 @@ function onChat(user, channel, text)
 	end
 
 	if text:find('%[IRC%-SharePos%] Permanently Pos x%:.+,y%:.+,z%:.+') then
-		sampAddChatMessage(user.nick,-1)
 		addOneOffSound(_,_,_,1056)
 		local x,y,z = text:match('x%:(.+),y%:(.+),z%:(.+)')
 		sampAddChatMessage(x .. ' ' .. y .. ' ' ..z,-1)
-		local id = sampGetPlayerIdByNickname(user.nick)
-		if pool[id][2] ~= -1 then
-			pool[id][2] = pool[id][2] + 5
-		else
-			pool[id][2] = os.clock()
-		end
-		removeBlip(pool[id][1])
-		pool[id][1] = addBlipForCoord(x,y,z)
-		changeBlipColour(pool[id][1], "0x"..clistToHex(sampGetPlayerIdByNickname(user.nick))..'ff')
+		sampAddChatMessage((user.nick),-1)
+		sampAddChatMessage(sampGetPlayerIdByNickname(user.nick),-1)
+		-- if pool[id][2] ~= -1 then
+		-- 	pool[id][2] = pool[id][2] + 5
+		-- else
+		-- 	pool[id][2] = os.clock()
+		-- end
+		-- removeBlip(pool[id][1])
+		-- pool[id][1] = addBlipForCoord(x,y,z)
+		-- changeBlipColour(pool[id][1], "0x"..clistToHex(sampGetPlayerIdByNickname(user.nick))..'ff')
 	end
 	if text:find('(%d+) get your pos') then
 		local id = text:match('(%d+)')
@@ -220,13 +220,13 @@ function onChat(user, channel, text)
 			else
 				local x,y,z = getCharCoordinates(PLAYER_PED)
 				send(string.format('[IRC-SharePos] Permanently Pos x:%s,y:%s,z:%s',x,y,z),false)
+				-- [IRC-SharePos] Permanently Pos x:1453.1206054688,y:369.88409423828,z:19.058031082153
 			end
 		end
 	end
 
 --------------
 	if not findStringInTable(msg['hideMsgOnChat'],text) then
-		user.nick = user.nick:gsub('|','_')
 		sampAddChatMessage(string.format('[IRC] {%s}%s[%s]{ffffff}:%s',
 			clistToHex(user.nick),
 			user.nick,
@@ -264,7 +264,6 @@ function onRaw(text)
 		s:unhook('OnRaw',2)
 		connect()
 	end
-	text = text:gsub('|','_')
 
  	-- :Vespan|Dark!~lua@1.1.1.1 QUIT :Ping timeout: 265 seconds
 	if text:find('%:.+!~.+QUIT.+:Ping timeout%:') then
@@ -277,7 +276,7 @@ function onRaw(text)
 	-- :Vespan_Dark!~BattleShi@1.1.1.1 JOIN #fdsfds
 	if text:find('%:.+!~.+ JOIN '..channel) then
 		local n = text:match('%:(.+)!~')
-		if n == (s.nick):gsub('|','_') then
+		if n == (s.nick) then
 			
 
 		end
@@ -316,7 +315,7 @@ function connect()
 
 	local id = select(2,sampGetPlayerIdByCharHandle(PLAYER_PED))
 	local nick = sampGetPlayerNickname(id)
-	s.nick = (string.format('%s',nick)):gsub('_',"|")
+	s.nick = (string.format('%s',nick))
 
 	s:connect("irc.ea.libera.chat")
 	s:prejoin(channel) 
@@ -365,7 +364,6 @@ end
 
 function clistToHex(n)
 	if sampGetPlayerIdByNickname(n) ~= nil then
-		n = n:gsub('|','_')
 		local id = sampGetPlayerIdByNickname(n)
 		return ("%06X"):format(bit.band(sampGetPlayerColor(id), 0xFFFFFF))
 	else
@@ -374,7 +372,7 @@ function clistToHex(n)
 end
 
 function sampGetPlayerIdByNickname(nick) 
-	if nick:find('|') then; nick = nick:gsub('|','_'); end
+	sampAddChatMessage('{cccccc}'..nick)
     local _, myid = sampGetPlayerIdByCharHandle(playerPed)
     if tostring(nick) == sampGetPlayerNickname(myid) then return myid end
     for i = 0, 1000 do if sampIsPlayerConnected(i) and sampGetPlayerNickname(i) == tostring(nick) then return i end end
