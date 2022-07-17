@@ -1,5 +1,5 @@
 script_name('IRC CHAT')
-script_version('2.0.2')
+script_version('2.0.333')
 
 for k,v in ipairs({'luairc.lua','asyncoperations.lua','util.lua','handlers.lua', 'moonloader.lua','vkeys.lua'}) do
 	if not doesFileExist(getWorkingDirectory()..'/lib/'..v) then
@@ -135,6 +135,7 @@ function main()
 		for k,v in ipairs(pool) do
 			if v[2] ~= -1 then
 				local t = os.clock()-v[2]
+				printStringNow(t,1)
 				if t > 10 then
 					removeBlip(v[1])
 					pool[k][1] = nil
@@ -202,14 +203,15 @@ function onChat(user, channel, text)
 		sampAddChatMessage(x .. ' ' .. y .. ' ' ..z,-1)
 		sampAddChatMessage((user.nick),-1)
 		sampAddChatMessage(sampGetPlayerIdByNickname(user.nick),-1)
-		-- if pool[id][2] ~= -1 then
-		-- 	pool[id][2] = pool[id][2] + 5
-		-- else
-		-- 	pool[id][2] = os.clock()
-		-- end
-		-- removeBlip(pool[id][1])
-		-- pool[id][1] = addBlipForCoord(x,y,z)
-		-- changeBlipColour(pool[id][1], "0x"..clistToHex(sampGetPlayerIdByNickname(user.nick))..'ff')
+		local id = sampGetPlayerIdByNickname(user.nick)
+		if pool[id][2] ~= -1 then
+			pool[id][2] = pool[id][2] + 5
+		else
+			pool[id][2] = os.clock()
+		end
+		removeBlip(pool[id][1])
+		pool[id][1] = addBlipForCoord(x,y,z)
+		changeBlipColour(pool[id][1], "0x"..clistToHex(sampGetPlayerIdByNickname(user.nick))..'ff')
 	end
 	if text:find('(%d+) get your pos') then
 		local id = text:match('(%d+)')
