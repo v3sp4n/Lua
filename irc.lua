@@ -1,5 +1,5 @@
 script_name('IRC CHAT')
-script_version('2.0.333')
+script_version('2.0.4')
 
 for k,v in ipairs({'luairc.lua','asyncoperations.lua','util.lua','handlers.lua', 'moonloader.lua','vkeys.lua'}) do
 	if not doesFileExist(getWorkingDirectory()..'/lib/'..v) then
