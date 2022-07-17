@@ -211,7 +211,7 @@ function onChat(user, channel, text)
 		end
 		removeBlip(pool[id][1])
 		pool[id][1] = addBlipForCoord(x,y,z)
-		changeBlipColour(pool[id][1], "0x"..clistToHex(sampGetPlayerIdByNickname(user.nick))..'ff')
+		changeBlipColour(pool[id][1], '0x'.. ("%06X"):format(bit.band(sampGetPlayerColor(id), 0xFFFFFF)) ..'FF'); 
 	end
 	if text:find('(%d+) get your pos') then
 		local id = text:match('(%d+)')
@@ -374,7 +374,6 @@ function clistToHex(n)
 end
 
 function sampGetPlayerIdByNickname(nick) 
-	sampAddChatMessage('{cccccc}'..nick)
     local _, myid = sampGetPlayerIdByCharHandle(playerPed)
     if tostring(nick) == sampGetPlayerNickname(myid) then return myid end
     for i = 0, 1000 do if sampIsPlayerConnected(i) and sampGetPlayerNickname(i) == tostring(nick) then return i end end
