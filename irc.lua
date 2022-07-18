@@ -17,7 +17,7 @@ local s = irc.new{nick = "bruh_man"}
 msg = {
 	['Chat'] = '',
 	['Raw'] = '',
-	['hideMsgOnChat'] = {},--{'%[IRC%-SharePos%]'},
+	['hideMsgOnChat'] = {'%[IRC%-SharePos%]'}
 }
 notf = {}
 pool = {
@@ -200,9 +200,6 @@ function onChat(user, channel, text)
 	if text:find('%[IRC%-SharePos%] Permanently Pos x%:.+,y%:.+,z%:.+') then
 		addOneOffSound(_,_,_,1056)
 		local x,y,z = text:match('x%:(.+),y%:(.+),z%:(.+)')
-		sampAddChatMessage(x .. ' ' .. y .. ' ' ..z,-1)
-		sampAddChatMessage((user.nick),-1)
-		sampAddChatMessage(sampGetPlayerIdByNickname(user.nick),-1)
 		local id = sampGetPlayerIdByNickname(user.nick)
 		if pool[id][2] ~= -1 then
 			pool[id][2] = pool[id][2] + 5
