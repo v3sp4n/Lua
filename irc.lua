@@ -135,7 +135,6 @@ function main()
 		for k,v in ipairs(pool) do
 			if v[2] ~= -1 then
 				local t = os.clock()-v[2]
-				printStringNow(t,1)
 				if t > 10 then
 					removeBlip(v[1])
 					pool[k][1] = nil
@@ -201,11 +200,7 @@ function onChat(user, channel, text)
 		addOneOffSound(_,_,_,1056)
 		local x,y,z = text:match('x%:(.+),y%:(.+),z%:(.+)')
 		local id = sampGetPlayerIdByNickname(user.nick)
-		if pool[id][2] ~= -1 then
-			pool[id][2] = pool[id][2] + 5
-		else
-			pool[id][2] = os.clock()
-		end
+		pool[id][2] = os.clock()
 		removeBlip(pool[id][1])
 		pool[id][1] = addBlipForCoord(x,y,z)
 		changeBlipColour(pool[id][1], '0x'.. ("%06X"):format(bit.band(sampGetPlayerColor(id), 0xFFFFFF)) ..'FF'); 
