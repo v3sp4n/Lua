@@ -1,5 +1,5 @@
 script_name('IRC CHAT')
-script_version('2.0.4')
+script_version('2.0.5')
 
 for k,v in ipairs({'luairc.lua','asyncoperations.lua','util.lua','handlers.lua', 'moonloader.lua','vkeys.lua'}) do
 	if not doesFileExist(getWorkingDirectory()..'/lib/'..v) then
@@ -327,7 +327,7 @@ function sharePosf()
 			sharePos = false
 		else
 			local x,y,z = getCharCoordinates(PLAYER_PED)
-			send(string.format('[IRC-SharePos] Permanently Pos x:%s,y:%s,z:%s',x,y,z),false)
+			send(string.format('[IRC-SharePos] Permanently Pos x:%s,y:%s,z:%s',x,y,z),true)
 		end
 
 		wait(2500)
