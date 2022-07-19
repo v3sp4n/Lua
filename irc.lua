@@ -1,5 +1,5 @@
 script_name('IRC CHAT')
-script_version('2.0.bruh')
+script_version('2.0.bruh2')
 
 for k,v in ipairs({'luairc.lua','asyncoperations.lua','util.lua','handlers.lua', 'moonloader.lua','vkeys.lua'}) do
 	if not doesFileExist(getWorkingDirectory()..'/lib/'..v) then
@@ -17,7 +17,7 @@ local s = irc.new{nick = "bruh_man"}
 msg = {
 	{text='',user=''},
 	{text=''},
-	{},
+	{'[IRC-SharePos]'},
 }
 notf = {}
 pool = {
@@ -33,6 +33,8 @@ audios = {
 	{name='aphex twin flim',url="https://cdn.discordapp.com/attachments/946815525583978496/998859331216875590/aphex-twin-flim.mp3"},
 	{name='hava nagila',url="https://cdn.discordapp.com/attachments/946815525583978496/998859586066993192/hava-nagila-original.mp3"},
 	{name='¡≈À€≈ –Œ«€ ¡≈À€≈ –Œ«€,¡≈«¿Ÿ»“€ ÿ»œ€',url="https://cdn.discordapp.com/attachments/946815525583978496/998859762051592202/laskovyi-mai-belye-rozy-yurii-satunov-believe-music-pravoobladatel.mp3"},
+	{name='◊¿—Œ¬Œ… ÿ¿Õ—ŒÕ Õ¿’Œ…',url="https://cdn.discordapp.com/attachments/973197036985942036/999012551423696896/yt1s.com_-_90_CHANSON_90.mp3"},
+	{name='√¿◊» ◊¿—',url=""},
 	{name=',,,,,,,,,,,,',url="https://cdn.discordapp.com/attachments/946815525583978496/998859845174317057/3d0305b3c7d1c02a.mp3"},
 }
 

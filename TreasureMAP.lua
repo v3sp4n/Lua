@@ -122,7 +122,7 @@ function main()
 					changeBlipColour(pool[i], finded[i] and colors[cfg.main.color_f][1] or colors[cfg.main.color_s][1])
 				elseif dist <= cfg.main.react and finded[i] == nil then
 					-- sampAddChatMessage('change ',-1)
-					if ircBool then irc.sendToChat('[TreasureMAP] change blip '..i,true) end
+					if ircBool then irc.sendToChat('[TreasureMAP.lua] change blip '..i,true) end
 					finded[i] = true
 					changeBlipColour(pool[i], colors[cfg.main.color_f][1])
 				elseif dist > cfg.main.radius and pool[i] ~= nil then
@@ -136,7 +136,7 @@ function main()
 
 			if ircBool then
 				irc.hideMsgOnChat('[TreasureMAP.lua]')
-				if irc.GetMsg(1,'text'):find('%[TreasureMAP%] change blip (%d+)') then
+				if irc.GetMsg(1,'text'):find('%[TreasureMAP%.lua%] change blip (%d+)') then
 					-- //iss [TreasureMAP] change blip 
 					local i = irc.GetMsg(1,'text'):match('blip (%d+)')
 					i = tonumber(i)
