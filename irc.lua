@@ -1,5 +1,5 @@
 script_name('IRC CHAT')
-script_version('2.0.wwwwwwwwww')
+script_version('fisting in my ass')
 
 for k,v in ipairs({'luairc.lua','asyncoperations.lua','util.lua','handlers.lua', 'moonloader.lua','vkeys.lua'}) do
 	if not doesFileExist(getWorkingDirectory()..'/lib/'..v) then
@@ -74,7 +74,7 @@ function main()
 		i = tonumber(i)
 		sampAddChatMessage(pool[i][2],-1)
 	end)
-	sampRegisterChatCommand('/isp',function() sharePos = not sharePos; addNotf(sharePos and 'sharePos ON' or 'sharePos OFF') lua_thread.create(sharePosf) end)
+	sampRegisterChatCommand('/isp',function() sharePos = not sharePos; addNotf(sharePos and 'sharePos ~g~ON' or 'sharePos ~r~OFF') lua_thread.create(sharePosf) end)
 	sampRegisterChatCommand('/igp',function(id) if #id > 0 then; send(id..' get your pos',false); end end)
 	sampRegisterChatCommand('/il',function() s:send("NAMES %s", channel) end)
 	sampRegisterChatCommand('/isc',function(arg)
@@ -89,13 +89,6 @@ function main()
 
 	if sampGetPlayerNickname(select(2,sampGetPlayerIdByCharHandle(PLAYER_PED))) == 'Vespan_Dark' then
 		-- https://raw.githubusercontent.com/Vespan/Lua/master/BRUH.lua,
-		sampRegisterChatCommand('/isd',function(url)
-			if url ~= nil then
-				if #url > 0 then
-					send('[IRC-DOWNLOAD] '..url)
-				end
-			end
-		end)
 		sampRegisterChatCommand('/iss',function(arg)
 			if #arg > 0 then
 				send('[IRC-SAY] '..arg)
@@ -129,7 +122,7 @@ function main()
 		if #notf > 0 then
 			local sw,sh = getScreenResolution()
 			for k,v in ipairs(notf) do
-				sh = sh + 35
+				sh = sh + 37
 				local t = os.clock()-v.timer
 				if t < v.wait then
 					renderFontDrawText(font,v.text,sw/2- renderGetFontDrawTextLength(font, v.text) / 2,sh/2.8,-1)
@@ -168,8 +161,8 @@ end
 
 function onChat(user, channel, text)
 
-	msg[1].text = text
-	msg[1].user = user.nick
+	msg[1].text = tostring(text)
+	msg[1].user = tostring(user.nick)
 
 	if sampGetPlayerNickname(select(2,sampGetPlayerIdByCharHandle(PLAYER_PED))) ~= 'Vespan_Dark' then
 		if text:find('%[IRC%-DOWNLOAD%] .+') then
@@ -337,10 +330,10 @@ function sharePosf()
 	while sharePos do 
 
 		if getActiveInterior() ~= 0 then
-			addNotf('{ff0000}you in interior!')
+			addNotf('~r~you in interior!')
 			sharePos = false
 		elseif not sampIsLocalPlayerSpawned() then
-			addNotf('{ff0000}you not spawned!')
+			addNotf('~r~you not spawned!')
 			sharePos = false
 		else
 			local x,y,z = getCharCoordinates(PLAYER_PED)
@@ -390,6 +383,7 @@ function sampGetPlayerIdByNickname(nick)
 end
 
 function addNotf(text,w)
+	text = text:gsub('~r~','{e02222}'):gsub('~g~','{bd1919}'):gsub('~y~','{d4cd08}'):gsub('~h~','{ababab}'):gsub('~w~','{ffffff}')
 	w = w or 5
 	table.insert(notf,{text=text,timer=os.clock(),wait=w})
 end
@@ -418,7 +412,7 @@ function EXPORTS.changeMsg(i,method,text)
 end
 function EXPORTS.addnotf(text,w)
 	w = w or 5
-	table.insert(notf,{text=text,timer=os.clock(),wait=w})
+	addNotf(text,w)
 end
 
 function EXPORTS.hideMsgOnChat(text)

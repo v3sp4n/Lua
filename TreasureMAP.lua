@@ -141,11 +141,11 @@ function main()
 					local i = irc.GetMsg(1,'text'):match('blip (%d+)')
 					i = tonumber(i)
 					if finded[i] ~= true then
-						irc.addnotf('check '..i,2)
+						irc.addnotf(irc.GetMsg(1,'user') .. ' ~g~check '..i,2)
 						changeBlipColour(pool[i], colors[cfg.main.color_f][1])	
 						finded[i] = true
 					elseif finded[i] == true then
-						irc.addnotf('check '..i,2)
+						irc.addnotf(irc.GetMsg(1,'user') .. ' ~y~check '..i,2)
 					end
 					irc.changeMsg(1,'text','-')
 				end
