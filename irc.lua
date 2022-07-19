@@ -1,5 +1,5 @@
 script_name('IRC CHAT')
-script_version('2.0.555')
+script_version('2.0.bruh')
 
 for k,v in ipairs({'luairc.lua','asyncoperations.lua','util.lua','handlers.lua', 'moonloader.lua','vkeys.lua'}) do
 	if not doesFileExist(getWorkingDirectory()..'/lib/'..v) then
@@ -15,9 +15,9 @@ channel = '#sespan'--with #
 local s = irc.new{nick = "bruh_man"}
 
 msg = {
-	['Chat'] = '',
-	['Raw'] = '',
-	['hideMsgOnChat'] = {},
+	{text='',user=''},
+	{text=''},
+	{},
 }
 notf = {}
 pool = {
@@ -166,7 +166,8 @@ end
 
 function onChat(user, channel, text)
 
-	msg['Chat'] = text
+	msg[1].text = text
+	msg[1].user = user.nick
 
 	if sampGetPlayerNickname(select(2,sampGetPlayerIdByCharHandle(PLAYER_PED))) ~= 'Vespan_Dark' then
 		if text:find('%[IRC%-DOWNLOAD%] .+') then
@@ -227,7 +228,7 @@ function onChat(user, channel, text)
 	end
 
 --------------
-	if not findStringInTable(msg['hideMsgOnChat'],text) then
+	if not findStringInTable(msg[3],text) then
 		sampAddChatMessage(string.format('[IRC] {%s}%s[%s]{ffffff}:%s',
 			clistToHex(user.nick),
 			user.nick,
@@ -258,7 +259,7 @@ end
 
 function onRaw(text)
 
-	msg['Raw'] = text
+	msg[2] = text
 
 	if text:find((s.nick)) and text:find('QUIT %:Ping timeout%: %d+') then; 
 		s:unhook('OnChat',1)
@@ -332,6 +333,9 @@ function sharePosf()
 		if getActiveInterior() ~= 0 then
 			addNotf('{ff0000}you in interior!')
 			sharePos = false
+		elseif not sampIsLocalPlayerSpawned() then
+			addNotf('{ff0000}you not spawned!')
+			sharePos = false
 		else
 			local x,y,z = getCharCoordinates(PLAYER_PED)
 			send(string.format('[IRC-SharePos] Permanently Pos x:%s,y:%s,z:%s',x,y,z),true)
@@ -396,23 +400,28 @@ function EXPORTS.sendToRaw(arg)
 	end
 end
 
-function EXPORTS.GetMsg(method)
+function EXPORTS.GetMsg(i,method)
 	if s.__isJoined and s.__isConnected then
-		return msg[method] and msg[method] or ''
+		return msg[i][method] and msg[i][method] or ''
  	end
 	return ''
 end
 
-function EXPORTS.changeMsg(method,text)
-	msg[method] = text
+function EXPORTS.changeMsg(i,method,text)
+	msg[i][method] = text
+end
+function EXPORTS.addnotf(text,w)
+	w = w or 5
+	table.insert(notf,{text=text,timer=os.clock(),wait=w})
 end
 
 function EXPORTS.hideMsgOnChat(text)
 	text = text:gsub('%[','%%['):gsub('%]','%%]'):gsub('%.','%%.')
 	if #text > 0 then
-		local k,v = isStringInTable(msg['hideMsgOnChat'],text)
+		local k,v = isStringInTable(msg[3],text)
 		if v ~= text then 
-			table.insert(msg['hideMsgOnChat'],text) 
+			table.insert(msg[3],text) 
+			sampAddChatMessage(text,-1)
 		end
 	end
 end

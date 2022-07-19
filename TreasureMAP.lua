@@ -75,6 +75,7 @@ function main()
 		end
 	end)
 
+
 	local ircBool,irc = irc_()
 	while ircBool do
 		wait(1234)
@@ -135,18 +136,18 @@ function main()
 
 			if ircBool then
 				irc.hideMsgOnChat('[TreasureMAP.lua]')
-				if irc.GetMsg('Chat'):find('%[TreasureMAP%] change blip (%d+)') then
+				if irc.GetMsg(1,'text'):find('%[TreasureMAP%] change blip (%d+)') then
 					-- //iss [TreasureMAP] change blip 
-					local i = irc.GetMsg('Chat'):match('blip (%d+)')
+					local i = irc.GetMsg(1,'text'):match('blip (%d+)')
 					i = tonumber(i)
 					if finded[i] ~= true then
-						printStringNow('~g~finded blip '..i,1500)
+						irc.addnotf('check '..i,2)
 						changeBlipColour(pool[i], colors[cfg.main.color_f][1])	
 						finded[i] = true
 					elseif finded[i] == true then
-						printStringNow('~y~find-finded blip '..i,1500)
+						irc.addnotf('check '..i,2)
 					end
-					irc.changeMsg('Chat','-')
+					irc.changeMsg(1,'text','-')
 				end
 			else
 				printStringNow('~r~IRC NOT LOADED!',1)
