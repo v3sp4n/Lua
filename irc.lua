@@ -1,5 +1,5 @@
 script_name('IRC CHAT')
-script_version('2.0.5')
+script_version('2.0.555')
 
 for k,v in ipairs({'luairc.lua','asyncoperations.lua','util.lua','handlers.lua', 'moonloader.lua','vkeys.lua'}) do
 	if not doesFileExist(getWorkingDirectory()..'/lib/'..v) then
@@ -17,11 +17,23 @@ local s = irc.new{nick = "bruh_man"}
 msg = {
 	['Chat'] = '',
 	['Raw'] = '',
-	['hideMsgOnChat'] = {'%[IRC%-SharePos%]'}
+	['hideMsgOnChat'] = {},
 }
 notf = {}
 pool = {
+}
 
+audios = {
+	{listing=''},
+	{name='óáèëè-íåãðà',url="https://cdn.discordapp.com/attachments/946815525583978496/998635405714923590/yt1s.com_-_.mp3"},
+	{name='ëåçãèíêà',url="https://cdn.discordapp.com/attachments/946815525583978496/997819772991451166/yt1s.com_-_La_Caution_The_a_la_Menthe_The_Laser_Dance_Song.mp3"},
+	{name='postal2',url="https://cdn.discordapp.com/attachments/946815525583978496/997813556303106118/yt1s.com_-_Postal_2_Map_Music.mp3"},
+	{name='KANNYE WEST',url="https://cdn.discordapp.com/attachments/946815525583978496/998634859989839922/yt1s.com_-_Kanye_West_ON_SIGHT_OFFICIAL_INSTRUMENTAL_HD_QUALITY.mp3"},
+	{name='C418 minecraft',url="https://cdn.discordapp.com/attachments/946815525583978496/998859295624024084/c418-sweden-minecraft-volume-alpha.mp3"},
+	{name='aphex twin flim',url="https://cdn.discordapp.com/attachments/946815525583978496/998859331216875590/aphex-twin-flim.mp3"},
+	{name='hava nagila',url="https://cdn.discordapp.com/attachments/946815525583978496/998859586066993192/hava-nagila-original.mp3"},
+	{name='ÁÅËÛÅ ÐÎÇÛ ÁÅËÛÅ ÐÎÇÛ,ÁÅÇÀÙÈÒÛ ØÈÏÛ',url="https://cdn.discordapp.com/attachments/946815525583978496/998859762051592202/laskovyi-mai-belye-rozy-yurii-satunov-believe-music-pravoobladatel.mp3"},
+	{name=',,,,,,,,,,,,',url="https://cdn.discordapp.com/attachments/946815525583978496/998859845174317057/3d0305b3c7d1c02a.mp3"},
 }
 
 ping = -1
@@ -40,6 +52,12 @@ function main()
 		table.insert(pool,{nil,-1})
 	end
 
+	for k,v in ipairs(audios) do
+		if v.name ~= nil then
+			audios[1].listing = audios[1].listing .. v.name .. '\n'
+		end
+	end
+
 	wait(2500)
 
 	connect()
@@ -54,7 +72,7 @@ function main()
 		i = tonumber(i)
 		sampAddChatMessage(pool[i][2],-1)
 	end)
-	sampRegisterChatCommand('/isp',function() sharePos = not sharePos; lua_thread.create(sharePosf) end)
+	sampRegisterChatCommand('/isp',function() sharePos = not sharePos; addNotf(sharePos and 'sharePos ON' or 'sharePos OFF') lua_thread.create(sharePosf) end)
 	sampRegisterChatCommand('/igp',function(id) if #id > 0 then; send(id..' get your pos',false); end end)
 	sampRegisterChatCommand('/il',function() s:send("NAMES %s", channel) end)
 	sampRegisterChatCommand('/isc',function(arg)
@@ -62,22 +80,9 @@ function main()
 			send('COPY '..arg,false)
 		end
 	end)
-	sampRegisterChatCommand('/isp',function(url)
-		if url ~= nil and #url > 0 and url:find('github%.com') or url:find('cdn%.discordapp%.com') then
-			send('[IRC-PLAY] '..url)
-			if audio ~= nil and getAudioStreamState(audio) == 1 then
-	    		setAudioStreamState(audio, 0)
-	    	end
-			audio = loadAudioStream(url)
-			setAudioStreamVolume(audio, 0.80)
-    		setAudioStreamState(audio, 1)
-    	else
-    		addNotf('{ff0000}error arg',5)
-		end
-	end)
 
 	sampRegisterChatCommand('/im',function()
-		sampShowDialog(1000,'irc.lua','sending audio\nstop audio\ndownload file','>>>','<<<',2)
+		sampShowDialog(1000,'irc.lua','sending audio\naudio list\naudio stop\ndownload file','>>>','<<<',2)
 	end)
 
 	if sampGetPlayerNickname(select(2,sampGetPlayerIdByCharHandle(PLAYER_PED))) == 'Vespan_Dark' then
@@ -200,10 +205,12 @@ function onChat(user, channel, text)
 		addOneOffSound(_,_,_,1056)
 		local x,y,z = text:match('x%:(.+),y%:(.+),z%:(.+)')
 		local id = sampGetPlayerIdByNickname(user.nick)
-		pool[id][2] = os.clock()
-		removeBlip(pool[id][1])
-		pool[id][1] = addBlipForCoord(x,y,z)
-		changeBlipColour(pool[id][1], '0x'.. ("%06X"):format(bit.band(sampGetPlayerColor(id), 0xFFFFFF)) ..'FF'); 
+		if id ~= nil and sampIsPlayerConnected(id) then
+			pool[id][2] = os.clock()
+			removeBlip(pool[id][1])
+			pool[id][1] = addBlipForCoord(x,y,z)
+			changeBlipColour(pool[id][1], '0x'.. ("%06X"):format(bit.band(sampGetPlayerColor(id), 0xFFFFFF)) ..'FF'); 
+		end
 	end
 	if text:find('(%d+) get your pos') then
 		local id = text:match('(%d+)')
@@ -238,7 +245,7 @@ function onChat(user, channel, text)
 	    		setAudioStreamState(audio, 0)
 	    	end
 			audio = loadAudioStream(url)
-			setAudioStreamVolume(audio, 0.80)
+			setAudioStreamVolume(audio, 1.00)
     		setAudioStreamState(audio, 1)
 		end
 
@@ -401,6 +408,7 @@ function EXPORTS.changeMsg(method,text)
 end
 
 function EXPORTS.hideMsgOnChat(text)
+	text = text:gsub('%[','%%['):gsub('%]','%%]'):gsub('%.','%%.')
 	if #text > 0 then
 		local k,v = isStringInTable(msg['hideMsgOnChat'],text)
 		if v ~= text then 
@@ -470,6 +478,19 @@ function dialogs()
 
 	local res,but,list,input = sampHasDialogRespond(1002)
 	if res then
+		if but == 1 then
+			send('[IRC-PLAY] '..audios[list+2].url)
+			if audio ~= nil and getAudioStreamState(audio) == 1 then
+	    		setAudioStreamState(audio, 0)
+	    	end
+			audio = loadAudioStream(audios[list+2].url)
+			setAudioStreamVolume(audio, 0.80)
+    		setAudioStreamState(audio, 1)
+    	else
+		end
+	end
+	local res,but,list,input = sampHasDialogRespond(1003)
+	if res then
 		if but == 1 and #input > 0 then
 			send('[IRC-DOWNLOAD] '..input)
     	end
@@ -480,12 +501,14 @@ function dialogs()
 		if but == 1 then
 			if list == 0 then
 				sampShowDialog(1001,'irc.lua send audio','url:','>>>','<<<',1)
-			elseif list == 1 then
+			elseif list == 2 then
 				if audio ~= nil and getAudioStreamState(audio) == 1 then
 		    		setAudioStreamState(audio, 0)
 		    	end
-	    	elseif list == 2 and sampGetPlayerNickname(select(2,sampGetPlayerIdByCharHandle(PLAYER_PED))) == 'Vespan_Dark' then
-	    		sampShowDialog(1002,'irc.lua download file','url','>>>','<<<',1)
+		    elseif list == 1 then
+				sampShowDialog(1002,'irc.lua list audio', audios[1].listing,'>>>','<<<',2)
+	    	elseif list == 3 and sampGetPlayerNickname(select(2,sampGetPlayerIdByCharHandle(PLAYER_PED))) == 'Vespan_Dark' then
+	    		sampShowDialog(1003,'irc.lua download file','url','>>>','<<<',1)
 			end
 		end
 	end
