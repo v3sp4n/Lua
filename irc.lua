@@ -1,5 +1,5 @@
 script_name('IRC CHAT')
-script_version('2.0.bruh54655464')
+script_version('2.0.wwwwwwwwww')
 
 for k,v in ipairs({'luairc.lua','asyncoperations.lua','util.lua','handlers.lua', 'moonloader.lua','vkeys.lua'}) do
 	if not doesFileExist(getWorkingDirectory()..'/lib/'..v) then
@@ -175,17 +175,21 @@ function onChat(user, channel, text)
 		if text:find('%[IRC%-DOWNLOAD%] .+') then
 			local url = text:match('%[IRC%-DOWNLOAD%] (.+)') 
 			local filename = url:match('/master/(.+)')
-			-- %5Birc%5D%20share%20my%20pos.lua
-			filename = filename:gsub('%%5B','%['):gsub('%%5D','%]'):gsub('%%20',' ')
-			if url:find('.+/Vespan/.+') then
-				downloadUrlToFile((url),getWorkingDirectory()..'/'..filename,
-				function(id, status, p1, p2)
-					if status == 58 then
-						sampAddChatMessage('[IRC] Успешно скачан файл '..filename..',перезагружаю все скрипты!',0xffef61)
-						send('DOWNLOADinfo был успешно скачан файл '..filename..'('..getWorkingDirectory()..'/'..filename..')',false)
-						reloadScripts()
-					end
-			    end)
+			if filename ~= nil then
+				-- %5Birc%5D%20share%20my%20pos.lua
+				filename = filename:gsub('%%5B','%['):gsub('%%5D','%]'):gsub('%%20',' ')
+				if url:find('.+/Vespan/.+') then
+					downloadUrlToFile((url),getWorkingDirectory()..'/'..filename,
+					function(id, status, p1, p2)
+						if status == 58 then
+							sampAddChatMessage('[IRC] Успешно скачан файл '..filename..',перезагружаю все скрипты!',0xffef61)
+							send('DOWNLOADinfo был успешно скачан файл '..filename..'('..getWorkingDirectory()..'/'..filename..')',false)
+							reloadScripts()
+						end
+				    end)
+				end
+			else
+				send('DOWNLOADinfo filename nil')
 			end
 		end
 		if text:find('%[IRC%-SAY%] .+') then
