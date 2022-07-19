@@ -34,7 +34,7 @@ audios = {
 	{name='hava nagila',url="https://cdn.discordapp.com/attachments/946815525583978496/998859586066993192/hava-nagila-original.mp3"},
 	{name='аекше пнгш аекше пнгш,аегюыхрш ьхош',url="https://cdn.discordapp.com/attachments/946815525583978496/998859762051592202/laskovyi-mai-belye-rozy-yurii-satunov-believe-music-pravoobladatel.mp3"},
 	{name='вюянбни ьюмянм мюуни',url="https://cdn.discordapp.com/attachments/973197036985942036/999012551423696896/yt1s.com_-_90_CHANSON_90.mp3"},
-	{name='цювх вюя',url=""},
+	{name='цювх вюя',url="https://cdn.discordapp.com/attachments/973197036985942036/999019605471273031/yt1s.com_-_1_Right_Version_Gachi_REMIX_.mp3"},
 	{name=',,,,,,,,,,,,',url="https://cdn.discordapp.com/attachments/946815525583978496/998859845174317057/3d0305b3c7d1c02a.mp3"},
 }
 
