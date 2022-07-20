@@ -383,7 +383,7 @@ function sampGetPlayerIdByNickname(nick)
 end
 
 function addNotf(text,w)
-	text = text:gsub('~r~','{e02222}'):gsub('~g~','{bd1919}'):gsub('~y~','{d4cd08}'):gsub('~h~','{ababab}'):gsub('~w~','{ffffff}')
+	text = text:gsub('~r~','{e02222}'):gsub('~g~','{0acd44}'):gsub('~y~','{ede60c}'):gsub('~h~','{ababab}'):gsub('~w~','{ffffff}')
 	w = w or 5
 	table.insert(notf,{text=text,timer=os.clock(),wait=w})
 end
