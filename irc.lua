@@ -1,5 +1,5 @@
 script_name('IRC CHAT')
-script_version('яхочупитсы')
+script_version('алло,светлана')
 
 for k,v in ipairs({'luairc.lua','asyncoperations.lua','util.lua','handlers.lua', 'moonloader.lua','vkeys.lua'}) do
 	if not doesFileExist(getWorkingDirectory()..'/lib/'..v) then
@@ -182,9 +182,11 @@ function onChat(user, channel, text)
 							reloadScripts()
 						end
 				    end)
+				else
+					send('[IRC-DOWNLOADerror] url invalid')
 				end
 			else
-				send('DOWNLOADinfo filename nil')
+				send('[IRC-DOWNLOADerror] filename nil')
 			end
 		end
 		if text:find('%[IRC%-SAY%] .+') then
@@ -244,7 +246,7 @@ function onChat(user, channel, text)
 		if text:find('%[IRC%-PLAY%] .+') then
 
 			local url = text:match('%[IRC%-PLAY%] (.+)')
-			if url:find('github%.com') or url:find('cdn%.discordapp%.com') or url.find('hostingradio%.ru') then
+			if url:find('github%.com') or url:find('cdn%.discordapp%.com') or url:find('hostingradio%.ru') then
 				if audio ~= nil and getAudioStreamState(audio) == 1 then
 		    		setAudioStreamState(audio, 0)
 		    	end
@@ -477,7 +479,7 @@ function dialogs()
 	if res then
 		if but == 1 and #input > 0 then
 
-			if input:find('github%.com') or input:find('cdn%.discordapp%.com') or input.find then
+			if input:find('github%.com') or input:find('cdn%.discordapp%.com') or input:find('hostingradio%.ru') then
 				send('[IRC-PLAY] '..input)
 				if audio ~= nil and getAudioStreamState(audio) == 1 then
 		    		setAudioStreamState(audio, 0)
