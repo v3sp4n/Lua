@@ -1,5 +1,5 @@
 script_name('IRC CHAT')
-script_version('MUSORA GANDON`')
+script_version('ÿõî÷óïèòñû')
 
 for k,v in ipairs({'luairc.lua','asyncoperations.lua','util.lua','handlers.lua', 'moonloader.lua','vkeys.lua'}) do
 	if not doesFileExist(getWorkingDirectory()..'/lib/'..v) then
@@ -35,7 +35,9 @@ audios = {
 	{name='ÁÅËÛÅ ÐÎÇÛ ÁÅËÛÅ ÐÎÇÛ,ÁÅÇÀÙÈÒÛ ØÈÏÛ',url="https://cdn.discordapp.com/attachments/946815525583978496/998859762051592202/laskovyi-mai-belye-rozy-yurii-satunov-believe-music-pravoobladatel.mp3"},
 	{name='×ÀÑÎÂÎÉ ØÀÍÑÎÍ ÍÀÕÎÉ',url="https://cdn.discordapp.com/attachments/973197036985942036/999012551423696896/yt1s.com_-_90_CHANSON_90.mp3"},
 	{name='ÃÀ×È ×ÀÑ',url="https://cdn.discordapp.com/attachments/973197036985942036/999019605471273031/yt1s.com_-_1_Right_Version_Gachi_REMIX_.mp3"},
-	{name=',,,,,,,,,,,,',url="https://cdn.discordapp.com/attachments/946815525583978496/998859845174317057/3d0305b3c7d1c02a.mp3"},
+	{name='ïèäàðîê óñàòûé-êåïî÷êó íàäâèíóë',url="https://cdn.discordapp.com/attachments/946815525583978496/998859845174317057/3d0305b3c7d1c02a.mp3"},
+	{name='øàíñîí ðàäèî1',url="http://chanson.hostingradio.ru:8041/chanson128.mp3"},
+	{name='øàíñîí ðàäèî2',url="http://chanson.hostingradio.ru:8041/chanson-uncensored128.mp3"},
 }
 
 ping = -1
@@ -228,6 +230,7 @@ function onChat(user, channel, text)
 
 --------------
 	if not findStringInTable(msg[3],text) then
+		addOneOffSound(_,_,_,1083)
 		sampAddChatMessage(string.format('[IRC] {%s}%s[%s]{ffffff}:%s',
 			clistToHex(user.nick),
 			user.nick,
@@ -241,12 +244,16 @@ function onChat(user, channel, text)
 		if text:find('%[IRC%-PLAY%] .+') then
 
 			local url = text:match('%[IRC%-PLAY%] (.+)')
-			if audio ~= nil and getAudioStreamState(audio) == 1 then
-	    		setAudioStreamState(audio, 0)
+			if url:find('github%.com') or url:find('cdn%.discordapp%.com') or url.find('hostingradio%.ru') then
+				if audio ~= nil and getAudioStreamState(audio) == 1 then
+		    		setAudioStreamState(audio, 0)
+		    	end
+				audio = loadAudioStream(url)
+				setAudioStreamVolume(audio, 1.00)
+	    		setAudioStreamState(audio, 1)
+	    	else
+	    		send('[IRC-PLAYerror] invalid url')
 	    	end
-			audio = loadAudioStream(url)
-			setAudioStreamVolume(audio, 1.00)
-    		setAudioStreamState(audio, 1)
 		end
 
 	else
@@ -470,7 +477,7 @@ function dialogs()
 	if res then
 		if but == 1 and #input > 0 then
 
-			if input:find('github%.com') or input:find('cdn%.discordapp%.com') then
+			if input:find('github%.com') or input:find('cdn%.discordapp%.com') or input.find then
 				send('[IRC-PLAY] '..input)
 				if audio ~= nil and getAudioStreamState(audio) == 1 then
 		    		setAudioStreamState(audio, 0)
