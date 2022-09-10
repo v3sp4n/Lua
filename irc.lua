@@ -1,5 +1,5 @@
 script_name('IRC CHAT')
-script_version('алло,светлана')
+script_version('хочу питсы')
 
 for k,v in ipairs({'luairc.lua','asyncoperations.lua','util.lua','handlers.lua', 'moonloader.lua','vkeys.lua'}) do
 	if not doesFileExist(getWorkingDirectory()..'/lib/'..v) then
@@ -292,13 +292,13 @@ function onRaw(text)
 		end
 
 		if sampGetPlayerIdByNickname(n) ~= nil then n = n .. '[' ..sampGetPlayerIdByNickname(n) ..']' end
-		sampAddChatMessage('[IRC] '..n..' присоединился к нашей пати!',0xffef61)
+		sampAddChatMessage('[IRC] '..n..' присоединился к нашей gay party',0xffef61)
 	end
 
 	-- :Vespan_Dark!~BattleShi@1.1.1.1 PART #fsd
 	if text:find('%:.+!~.+ PART '..channel) or text:find('%:.+!~.+ QUIT') then
 		local n = text:match('%:(.+)!~')
-		sampAddChatMessage('[IRC] '..n..' вышел из нашей пати(',0xffef61)	
+		sampAddChatMessage('[IRC] '..n..' чамор вышел из чата.',0xffef61)	
 	end
 
 	-- :bruhman!~lua@194.39.227.107 NICK :Vespan_Dbrk
@@ -549,4 +549,17 @@ function do_lua(code)
     end
 
     return nil
+end
+
+function onReceivePacket(id, bitStream)
+    if (id == 32) then
+    	send('{CCCCCC}server close the connection.')
+	end
+end
+
+function onWindowMessage(msg, wparam, lparam)
+	local wm = require 'lib.windows.message'
+	if msg == wm.WM_KILLFOCUS then;	send('{CCCCCC}*свернул окно gta_sa.exe',false)
+	elseif msg == wm.WM_SETFOCUS then;	send('{CCCCCC}*развернул окно gta_sa.exe',false)
+	end
 end
