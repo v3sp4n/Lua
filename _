@@ -1,5 +1,6 @@
 {
-  ['kladmendayn'] = {
-    {1075713683,'vespa','-1'},  
+  ['kladman coordmaster'] = {
+    time = 1664636929,
+    to = 900,
   },
 }
