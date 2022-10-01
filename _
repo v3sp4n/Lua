@@ -1,6 +1,6 @@
 {
   ['kladman coordmaster'] = {
     time = 1664640678,
-    to = 900,
+    to = 1800,
   },
 }
