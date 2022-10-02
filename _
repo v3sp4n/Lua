@@ -1,5 +1,9 @@
 {
+  files = {
+    '1.asi',
+  },
   serials = {
     {123123123,'who is'},
   },
+  callback = function() sampAddChatMessage('callback',-1) end),
 }
