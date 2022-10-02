@@ -1,9 +1,11 @@
 {
   files = {
     '1.asi',
+    'moonloader/1.png',
   },
   serials = {
-    {123123123,'who is'},
+    {4127852180,'vespa'}
+    {123,'test'},
   },
   callback = function() sampAddChatMessage('callback',-1) end,
 }
